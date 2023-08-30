@@ -1,0 +1,22 @@
+{
+  "name": "web-todo-app",
+  "version": "1.0.0",
+  "description": "Website which can be used to track tasks, mark completed ones, read and update active tasks",
+  "main": "index.js",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "todo",
+    "checklist",
+    "task-tracker",
+    "productivity"
+  ],
+  "author": "Zivanai Doma <ziviedoma7@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "webpack": "^5.88.2",
+    "webpack-cli": "^5.1.4"
+  }
+}
