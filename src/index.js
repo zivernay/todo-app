@@ -2,16 +2,18 @@
 /**
 * A factory function to generate todo objects
 * @function
-* @params {String} title -  Name of the todo
-* @params {String} description - Description of the  of the todo task
-* @params {Datetime} dueDate - Date when task is due
-* @params {Number} priority - A number to rank how important a task is
+* @param {String} title -  Name of the todo
+* @param {String} description - Description of the  of the todo task
+* @param {Date} dueDate - Date when task is due
+* @param {Number} priority - A number to rank how important a task is
 * @returns {Object} todo Object - An information holding object for a todo
 */
 function todoFactory(title,
     description,
     dueDate,
     priority) {
+    const taskID = 1; // Make a random id generator!!!!!!!!!!!
+    const catergories = [];
     /** 
      * Get the name of the todo
      * @function
@@ -19,6 +21,14 @@ function todoFactory(title,
      */
     function getTitle() {
         return title;
+    };
+        /** 
+     * Get the ID of the todo
+     * @function
+     * @returns {Number} taskID - Unique identifier of the todo
+     */
+    function getId(){
+        return taskID;
     };
     /** 
      * Get the description of the todo
@@ -81,10 +91,11 @@ function todoFactory(title,
         return priority;
     };
     return {
-        getTitle, getDescription, getDueDate, getPriority,
+        getTitle, getId, getDescription, getDueDate, getPriority,
         setTitle, setDescription, setDueDate, setPriority,
     }
 }
+
 //--- create a projects factory function | Information holder
 /**
  * Represent grouped todo objects based on user defined catergories
@@ -92,36 +103,46 @@ function todoFactory(title,
  * @returns {Object} categories Object - An information holding object to store todo categories
  */
 function projectsFactory() {
-    const all = [];
-    const groups = {};
-    /** Get an array of all the todo objects across all categories
+    const all = new Map();
+    const groups = new Map();
+    /** Get an iterable of all the todo objects across all categories
      * @function
-     * @returns {Array} all - An Array with all todo objects
+     * @returns {Array} all - An iterable with all todo objects
      */
     function getAll() {
-        return all;
+        return all.values();
     };
-    /** Get an array of all to catergories defined
+    /**
+     * Save or Update an object
+     * @param {Number} id - Unique number to identify the object
+     * @param {Object} obj - Object being stored
+     * @returns {Object}  -Returns the object just set
+     */
+    function saveTodo(id, obj) {
+        all.set(id, obj)
+        return all.get(id);
+    }
+    /** Get an iterable of all to catergories defined
      * @function
-     * @returns {Array} categories - An array with all catergory names
+     * @returns {Array} categories - an iterable with all catergory names
      */
     function getCatergoryList() {
-        return Object.keys(groups);
+        return groups.keys();
     };
     /** Set a category
      * @function
      * @param {String} groupName - String value to set a category name
      */
     function addGroup(groupName) {
-        groups[groupName] = [];
+        groups.set(groupName, []);
     };
-    /** Get an array of todos under a specified category
+    /** Get an iterable of todos under a specified category
      * @function
      * @param {String} catergory - String category name
-     * @returns {Array} todos - An array of todo in the specified category
+     * @returns {Array} todos - an iterable of todo in the specified category
      */
     function getGroup(groupName) {
-        return groups[groupName];
+        return groups.get(groupName);
     };
     /** Delete a specified category
      * @function
@@ -129,19 +150,18 @@ function projectsFactory() {
      * @returns {String} group name - Returns the name of the just deleted group
      */
     function deleteGroup(groupName) {
-        delete groups[groupName];
+        groups.delete(groupName);
         return groupName;
     };
     /** Delete all categories
      * @function
      */
     function deleteAllGroups() {
-        for (const category of Object.keys(groups)) {
-            deleteGroup(category);
-        }
+        groups.clear();
     }
     return {
         getAll,
+        saveTodo,
         getCatergoryList,
         addGroup,
         getGroup,
@@ -149,5 +169,47 @@ function projectsFactory() {
         deleteAllGroups
     }
 }
+
 //--- create a todoManager factory function | Service providers
+/**
+ * Todo manager with the CRUD functions
+ * @function
+ * @param {Function} todoFactory - A todo factory function
+ * @param {Object} projectsObj -  An object from a projectFactory
+ * @returns {Object} todoManager Object  - Object with crut functions to manage the todos
+ */
+function todoManager(todoFactory, projectsObj) {
+    /**
+       * Create the todo object using factory func
+       * @function
+       * @param {String} title - Name of todo
+       * @param {String} description - Description of tod
+       * @param {Date} dueDate - Date when task is due
+       * @param {Number} priority Integer representation of importance highs=10
+       * @returns {Object} todoObj - Returns todo object from the factory
+       */
+    function createTodo(title,
+        description,
+        dueDate = undefined,
+        priority = 1) {
+        const todo = todoFactory(title, description, dueDate, priority);
+        saveTodo(todo, projectsObj);
+        return todo;
+    };
+    /**
+     * Save an object to the universal Map object
+     * @private
+     * @function
+     * @param {Object} todo - Object to be stored
+     * @param {Object} projectsObj -Map object to store todos
+     * @returns {Object} todo - Returns saved object object
+     */
+    function saveTodo(todo, projectsObj) {
+        return projectsObj.saveTodo(todo.getId, todo);
+    }
+    return {
+        createTodo
+    }
+}
+
 //--- create a projectsManager factory function | Service provider
