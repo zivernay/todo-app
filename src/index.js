@@ -22,12 +22,12 @@ function todoFactory(title,
     function getTitle() {
         return title;
     };
-        /** 
-     * Get the ID of the todo
-     * @function
-     * @returns {Number} taskID - Unique identifier of the todo
-     */
-    function getId(){
+    /** 
+ * Get the ID of the todo
+ * @function
+ * @returns {Number} taskID - Unique identifier of the todo
+ */
+    function getId() {
         return taskID;
     };
     /** 
@@ -105,6 +105,15 @@ function todoFactory(title,
 function projectsFactory() {
     const all = new Map();
     const groups = new Map();
+    /**
+     * Get a specific todo object
+     * @function
+     * @param {Number} objId - Id to uniquely identify the object
+     * @returns {Object} todo - Refence to stored object
+     */
+    function getTodoById(objId) {
+        return all.get(objId);
+    }
     /** Get an iterable of all the todo objects across all categories
      * @function
      * @returns {Array} all - An iterable with all todo objects
@@ -144,6 +153,14 @@ function projectsFactory() {
     function getGroup(groupName) {
         return groups.get(groupName);
     };
+    /**
+     * Delete a specific object
+     * @function
+     * @param {Number} id - Unique number to identify the object
+     */
+    function deleteTodoItem(id) {
+        groups.delete(id)
+    };
     /** Delete a specified category
      * @function
      * @param {String} catergory - String category name
@@ -160,11 +177,13 @@ function projectsFactory() {
         groups.clear();
     }
     return {
+        getTodoById,
         getAll,
         saveTodo,
         getCatergoryList,
         addGroup,
         getGroup,
+        deleteTodoItem,
         deleteGroup,
         deleteAllGroups
     }
@@ -206,9 +225,30 @@ function todoManager(todoFactory, projectsObj) {
      */
     function saveTodo(todo, projectsObj) {
         return projectsObj.saveTodo(todo.getId, todo);
+    };
+    /**
+     * Get a todo by its ID from the universal Map object
+     * @param {string} id - ID of the todo to retrieve
+     * @param {Object} projectsObj - Map object to retrieve todos from
+     * @returns {Object} - Returns the todo object with the specified ID 
+    */
+    function getTodo(id, projectsObj) {
+        return projectsObj.getTodoById(id);
+    };
+    /**
+     * Delete a todo by its ID from the universal Map object
+     * @param {string} id - ID of the todo to delete
+     * @param {Object} projectsObj - Map object to delete todos from
+     * @returns {boolean} - Returns true if the todo was successfully deleted, false otherwise 
+     */
+    function deleteTodo(id, projectsObj) {
+        return projectsObj.deleteTodoItem(id);
     }
     return {
-        createTodo
+        createTodo,
+        getTodo,
+        saveTodo,
+        deleteTodo
     }
 }
 
