@@ -230,8 +230,6 @@ function TodoMapFactory() {
     }
 }
 
-const projectsObj = projectsFactory();
-const todoMapObj = TodoMapFactory();
 //--- create a todoManager factory function | Service providers
 /**
  * Todo manager with the CRUD functions
@@ -240,7 +238,7 @@ const todoMapObj = TodoMapFactory();
  * @param {Object} projectsObj -  An object from a projectFactory
  * @returns {Object} todoManager Object  - Object with crut functions to manage the todos
  */
-function todoManager(todoFactory, projectsObj, todoMapObj) {
+function todoManagerFactory(todoFactory, projectsObj, todoMapObj) {
     /**
        * Create the todo object using factory func
        * @function
@@ -311,4 +309,11 @@ function todoManager(todoFactory, projectsObj, todoMapObj) {
         saveTodo,
         deleteTodo
     }
+}
+
+export {
+    todoFactory,
+    projectsFactory,
+    TodoMapFactory,
+    todoManagerFactory
 }
