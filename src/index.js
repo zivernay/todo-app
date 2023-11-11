@@ -11,8 +11,8 @@
 function todoFactory(title,
     description,
     dueDate,
-    priority) {
-    const taskID = 1; // Make a random id generator!!!!!!!!!!!
+    priority,
+    taskID) {
     const catergories = [];
     /** 
      * Get the name of the todo
@@ -30,6 +30,9 @@ function todoFactory(title,
     function getId() {
         return taskID;
     };
+    function getCatergoryList() {
+        return catergories;
+    }
     /** 
      * Get the description of the todo
      * @function
@@ -91,8 +94,8 @@ function todoFactory(title,
         return priority;
     };
     return {
-        getTitle, getId, getDescription, getDueDate, getPriority,
-        setTitle, setDescription, setDueDate, setPriority,
+        getTitle, getId, getCatergoryList, getDescription, getDueDate, getPriority,
+        setTitle, setDescription, setDueDate, setPriority
     }
 }
 
@@ -103,34 +106,7 @@ function todoFactory(title,
  * @returns {Object} categories Object - An information holding object to store todo categories
  */
 function projectsFactory() {
-    const all = new Map();
     const groups = new Map();
-    /**
-     * Get a specific todo object
-     * @function
-     * @param {Number} objId - Id to uniquely identify the object
-     * @returns {Object} todo - Refence to stored object
-     */
-    function getTodoById(objId) {
-        return all.get(objId);
-    }
-    /** Get an iterable of all the todo objects across all categories
-     * @function
-     * @returns {Array} all - An iterable with all todo objects
-     */
-    function getAll() {
-        return all.values();
-    };
-    /**
-     * Save or Update an object
-     * @param {Number} id - Unique number to identify the object
-     * @param {Object} obj - Object being stored
-     * @returns {Object}  -Returns the object just set
-     */
-    function saveTodo(id, obj) {
-        all.set(id, obj)
-        return all.get(id);
-    }
     /** Get an iterable of all to catergories defined
      * @function
      * @returns {Array} categories - an iterable with all catergory names
@@ -154,13 +130,22 @@ function projectsFactory() {
         return groups.get(groupName);
     };
     /**
-     * Delete a specific object
+     * Delete a specific object from category
      * @function
      * @param {Number} id - Unique number to identify the object
      */
-    function deleteTodoItem(id) {
-        groups.delete(id)
+    function removeFromGroup(id, groupName) {
+        const i = groups[groupName].find(id);
+        groups[groupName].splice(i, 1);
     };
+    /**
+ * Append a specific object to category
+ * @function
+ * @param {Number} id - Unique number to identify the object
+ */
+    function appendToGroup(id, groupName) {
+        groups[groupName].push(id);
+    }
     /** Delete a specified category
      * @function
      * @param {String} catergory - String category name
@@ -177,18 +162,76 @@ function projectsFactory() {
         groups.clear();
     }
     return {
-        getTodoById,
-        getAll,
-        saveTodo,
         getCatergoryList,
         addGroup,
         getGroup,
-        deleteTodoItem,
+        removeFromGroup,
+        appendToGroup,
         deleteGroup,
         deleteAllGroups
     }
 }
 
+//--- TodoMap for managing the data storage
+/**
+ * Factory to create the todoMap object
+ * @function
+ * @returns {Object} todoMap
+ */
+function TodoMapFactory() {
+    const all = new Map();
+    /**
+ * Get a specific todo object
+ * @function
+ * @param {Number} objId - Id to uniquely identify the object
+ * @returns {Object} todo - Refence to stored object
+ */
+    function getTodoById(objId) {
+        return all.get(objId);
+    };
+    function getSize() {
+        return all.size;
+    }
+    /** Get an iterable of all the todo objects across all categories
+     * @function
+     * @returns {Array} all - An iterable with all todo objects
+     */
+    function getAll() {
+        return all.values();
+    };
+    /**
+ * Save or Update an object
+ * @param {Number} id - Unique number to identify the object
+ * @param {Object} obj - Object being stored
+ * @returns {Object}  -Returns the object just set
+ */
+    function saveTodo(id, obj) {
+        all.set(id, obj)
+        return all.get(id);
+    };
+    /**
+     * Delete a specific object
+     * @function
+     * @param {Number} id - Unique number to identify the object
+     */
+    function deleteTodoItem(id) {
+        all.delete(id)
+    };
+    function hasId(id) {
+        return all.has(id);
+    };
+    return {
+        getTodoById,
+        getAll,
+        saveTodo,
+        deleteTodoItem,
+        hasId,
+        getSize,
+    }
+}
+
+const projectsObj = projectsFactory();
+const todoMapObj = TodoMapFactory();
 //--- create a todoManager factory function | Service providers
 /**
  * Todo manager with the CRUD functions
@@ -197,7 +240,7 @@ function projectsFactory() {
  * @param {Object} projectsObj -  An object from a projectFactory
  * @returns {Object} todoManager Object  - Object with crut functions to manage the todos
  */
-function todoManager(todoFactory, projectsObj) {
+function todoManager(todoFactory, projectsObj, todoMapObj) {
     /**
        * Create the todo object using factory func
        * @function
@@ -211,10 +254,25 @@ function todoManager(todoFactory, projectsObj) {
         description,
         dueDate = undefined,
         priority = 1) {
-        const todo = todoFactory(title, description, dueDate, priority);
-        saveTodo(todo, projectsObj);
-        return todo;
+        // Make todo with unique new id
+        let todoItem;
+        do {
+            if (todoMapObj.size > 999999) {
+                return -1; // Exceeded max random numbers
+            }
+            todoItem = todoFactory(title, description, dueDate, priority, generateTodoId());
+        } while (todoMapObj.hasId(todoItem.getId()));
+        saveTodo(todoItem);
+        return todoItem;
     };
+    /**
+    * @function
+    * @returns {Number} random value between 0 and 1B
+    */
+    function generateTodoId() {
+        const randVal = Math.random();
+        return Math.floor(randVal * 1000000000);
+    }
     /**
      * Save an object to the universal Map object
      * @private
@@ -223,17 +281,17 @@ function todoManager(todoFactory, projectsObj) {
      * @param {Object} projectsObj -Map object to store todos
      * @returns {Object} todo - Returns saved object object
      */
-    function saveTodo(todo, projectsObj) {
-        return projectsObj.saveTodo(todo.getId, todo);
+    function saveTodo(todo) {
+        return todoMapObj.saveTodo(todo.getId(), todo);
     };
     /**
      * Get a todo by its ID from the universal Map object
      * @param {string} id - ID of the todo to retrieve
-     * @param {Object} projectsObj - Map object to retrieve todos from
+     * @param {Object} todoMapObj - Map object to retrieve todos from
      * @returns {Object} - Returns the todo object with the specified ID 
     */
-    function getTodo(id, projectsObj) {
-        return projectsObj.getTodoById(id);
+    function getTodo(id) {
+        return todoMapObj.getTodoById(id);
     };
     /**
      * Delete a todo by its ID from the universal Map object
@@ -241,8 +299,11 @@ function todoManager(todoFactory, projectsObj) {
      * @param {Object} projectsObj - Map object to delete todos from
      * @returns {boolean} - Returns true if the todo was successfully deleted, false otherwise 
      */
-    function deleteTodo(id, projectsObj) {
-        return projectsObj.deleteTodoItem(id);
+    function deleteTodo(todo) {
+        todo.catergories.forEach(tag => {
+            projectsObj.removeFromGroup(todo.getId(), tag);
+        });
+        return todoMapObj.deleleTodoItem(id);
     }
     return {
         createTodo,
@@ -251,5 +312,3 @@ function todoManager(todoFactory, projectsObj) {
         deleteTodo
     }
 }
-
-//--- create a projectsManager factory function | Service provider
