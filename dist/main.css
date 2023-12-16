@@ -1,0 +1,23 @@
+:root {
+    font: normal 300 1rem/1.6 Inter, serif;
+    color: #000;
+}
+
+.app-greeting {
+    display: flex;    
+    height: 90px;
+    align-items: center;
+    justify-content: flex-start;
+}
+.greeting-text {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 100;
+}
+.username-text, 
+.end-text {
+    font-size: 1.6rem;
+}
+.end-text {
+    color: #F00;
+}

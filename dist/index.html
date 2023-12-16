@@ -3,10 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Todo app</title>
+    <title>LexiTask</title>
+    <meta name="author" content="ad solutions">
+    <link rel="stylesheet" href="./main.css">
     <script defer src="./main.js"></script>
 </head>
 <body>
-    
+    <!-- Header-->
+    <header class="app-header" id="appHeader">
+        <article class="app-greeting" id="appGreeting">
+            <p class="message" id="greetingMessage">
+                <span class="greeting-text">Hello</span>
+                <span class="username-text">User</span>
+                <span class="end-text">.</span>
+            </p>
+        </article>
+
+        <article class="app-dock" hidden>
+            <menu class="app-nav">
+                <li><button name="nav-back" type="button">Back</button></li>
+                <li><button name="edit" type="button">Edit</button></li>
+                <li><button name="save" type="button">Save</button></li>
+            </menu>
+            <menu class="obj-properties">
+                <li>
+                    <label for="priority">Priority</label>
+                    <input type="range" name="task-priority" id="priority" list="priority-values" min="0" max="10">
+                    <datalist id="priority-values">
+                        <option value="0" label="very low"></option>
+                        <option value="1"></option>
+                        <option value="2" label="low"></option>
+                        <option value="3"></option>
+                        <option value="4"></option>
+                        <option value="5" label="medium"></option>
+                        <option value="6"></option>
+                        <option value="7"></option>
+                        <option value="8" label="high"></option>
+                        <option value="9"></option>
+                        <option value="10" label="very high"></option>
+                    </datalist>
+                </li>
+                <li>
+                    <label for="due-date">due Date</label>
+                    <input type="datetime-local" id="due-date" name="due-date">
+                </li>
+                <li><button name="more">...</button></li>
+            </menu>
+        </article>
+    </header>
+    <main class="app-content" id="appContent" hidden>
+        <article class="app-info">
+            <menu class="menu" id="appMenu">
+                <li>LexiTask</li>
+                <li>Calender view</li>
+                <li>Preferences</li>
+            </menu>
+        </article>
+        <article id="floatingMenu">
+            <menu class="menu">
+                <li>Add task</li>
+            </menu>
+        </article>
+        <article class="todo">
+            <section class="info"></section>
+            <section class="content">
+                <h3 class="title">Title</h3>
+                <p class="description"></p>
+            </section>
+        </article>
+    </main>
+    <footer class="app-footer" id="appFooter">
+
+    </footer>
 </body>
 </html>
