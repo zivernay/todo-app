@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,6 +9,7 @@
     <link rel="stylesheet" href="./main.css">
     <script defer src="./main.js"></script>
 </head>
+
 <body>
     <!-- Header-->
     <header class="app-header" id="appHeader">
@@ -50,25 +52,42 @@
                 <li><button name="more">...</button></li>
             </menu>
         </article>
-    </header>
-    <main class="app-content" id="appContent" hidden>
-        <article class="app-info">
+        <article class="app-info" hidden>
             <menu class="menu" id="appMenu">
                 <li>LexiTask</li>
                 <li>Calender view</li>
                 <li>Preferences</li>
             </menu>
         </article>
-        <article id="floatingMenu">
+    </header>
+
+    <!-- Main content-->
+    <main class="app-content" id="appContent">
+        <article id="floatingMenu" hidden>
             <menu class="menu">
                 <li>Add task</li>
             </menu>
         </article>
         <article class="todo">
-            <section class="info"></section>
+            <section class="info">
+                <div class="date">
+                    <span class="due-notice">Due</span>
+                    <span class="due-day">Tue</span>
+                    <span class="due-date">01 2023</span>
+                </div>
+                <div class="time">
+                    <span class="digits">09:17</span>
+                    <span class="ampm">AM</span>
+                </div>
+                <div class="extra">
+                    <span class="status">Done</span>
+                </div>
+            </section>
             <section class="content">
                 <h3 class="title">Title</h3>
-                <p class="description"></p>
+                <p class="description">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Mollitia, saepe?
+                </p>
             </section>
         </article>
     </main>
@@ -76,4 +95,5 @@
 
     </footer>
 </body>
+
 </html>
