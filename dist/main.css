@@ -2,13 +2,11 @@
     font: normal 300 1rem/1.6 Inter, serif;
     color: #000;
 }
-
-.app-greeting {
-    display: flex;    
-    height: 90px;
-    align-items: center;
-    justify-content: flex-start;
-}
+/*
+===============
+    TYPOGRAPHY
+===============
+*/
 .greeting-text {
     display: block;
     font-size: 1.2rem;
@@ -20,4 +18,36 @@
 }
 .end-text {
     color: #F00;
+}
+/*
+===============
+    LAYOUT
+===============
+*/
+main {
+    --blockHeight: 90px;
+    --gap: 1em;
+}
+/* HEADER */
+.app-greeting {
+    display: flex;    
+    height: 90px;
+    align-items: center;
+    justify-content: flex-start;
+}
+/*MAIN CONTENT*/
+article.todo {
+    display: flex;
+    gap: var(--gap);
+}
+.info,
+.info .time{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+.content {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: auto;
 }
